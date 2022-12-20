@@ -43,7 +43,15 @@ def get_user_feed(user_id):
 @application.route("/users/<id>/remove", methods=["DELETE"])
 def delete_user(id):
     user_id =  id
-    
+    # check if the user exists:
+    try:
+        request_url = GATEWAY_URL + "users/{}".format(user_id)
+        msg = requests.get(request_url)
+        if msg.text == "Invalid ID":
+            return "User does not exist", 500
+    except requests.exceptions.RequestException as e:
+        return e 
+
     # delete from feeds db
     request_url = GATEWAY_URL + "users/{}/posts".format(user_id)
     get_all_posts = requests.get(request_url)
