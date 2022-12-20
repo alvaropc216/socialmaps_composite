@@ -22,21 +22,18 @@ class DatetimeEncoder(json.JSONEncoder):
 
 @application.route("/feed/<user_id>", methods=["GET"])
 def get_user_feed(user_id):
-    # TODO: Get userID from token
-    # user_id = 6
     request_url = GATEWAY_URL + "users/{}/friends".format(user_id)
     user_friends = requests.get(request_url)
     friends_post_url = GATEWAY_URL + "posts?"
     id_list=[]
     for user in user_friends.json():
-        id_list.append(str(user["data"]["data"]["id"]))
+        if user['data'] is not None:
+            id_list.append(str(user["data"]["data"]["id"]))
     friends_post_url = friends_post_url + "user_id=" + "&user_id=".join(id_list)
     friends_post_url = friends_post_url + "&order_by=post_time&DESC=TRUE"
-    print("Here", friends_post_url)
     friends_posts = requests.get(friends_post_url)
-    print(friends_posts)
-    # rsp = Response(json.dumps(friends_posts.json(), cls=DatetimeEncoder), status=200, content_type="application.json")
-    return "ok"
+    rsp = Response(json.dumps(friends_posts.json(), cls=DatetimeEncoder), status=200, content_type="application.json")
+    return rsp
 
 
 # Deleting user *(delete all uder-friend pairs, delete user posts and delete user)
