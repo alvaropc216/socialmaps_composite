@@ -25,7 +25,6 @@ def health_test():
         "health": "Good",
         "at time": t
     }
-    session.clear()
     result = Response(json.dumps(msg), status=200, content_type="application/json")
     return result
 
