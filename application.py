@@ -9,15 +9,25 @@ CORS(application)
 
 # TODO Redirect to API GATEWAY
 GATEWAY_URL = "https://xx0lgzff6h.execute-api.us-east-1.amazonaws.com/test/"
-# GATEWAY_URL = "http://52.23.170.133:5011/"
-#GATEWAY_URL = "http://127.0.0.1:8000/"
-#LOCAL_URL = "http://127.0.0.1:5011/"
 
 class DatetimeEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, datetime):
             return o.isoformat()
         return super().default(o)
+
+   
+@application.route("/")
+def health_test():
+    t = str(datetime.now())
+    msg = {
+        "name": "SocialMapsComposite-Service",
+        "health": "Good",
+        "at time": t
+    }
+    session.clear()
+    result = Response(json.dumps(msg), status=200, content_type="application/json")
+    return result
 
 
 @application.route("/feed/<user_id>", methods=["GET"])
